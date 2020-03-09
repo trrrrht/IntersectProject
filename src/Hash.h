@@ -1,15 +1,10 @@
 #pragma once
 #include"StdHead.h"
-
-struct MyKey
-{
-	double x;
-	double y;
-};
+#include"IntersectPoint.h"
 
 struct MyKeyHashHasher
 {
-	size_t operator()(const MyKey& k) const noexcept
+	size_t operator()(const IntersectPoint& k) const noexcept
 	{
 		return std::hash<double>{}(k.x) + std::hash<double>{}(k.y);
 	}
@@ -17,8 +12,8 @@ struct MyKeyHashHasher
 
 struct MyKeyHashComparator
 {
-	bool operator()(const MyKey& k1, const MyKey& k2) const noexcept
+	bool operator()(const IntersectPoint& k1, const IntersectPoint& k2) const noexcept
 	{
-		return abs(k1.x - k2.x) < 0.000001 && abs(k1.y - k2.y) < 0.000001;
+		return abs(k1.x - k2.x) < eps && abs(k1.y - k2.y) < eps;
 	}
 };
