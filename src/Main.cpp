@@ -14,21 +14,11 @@ int cycle_index = 0;
 
 bool comparer(IntersectPoint& point1, IntersectPoint& point2)
 {
-	if (point1.x > point2.x) {
-		return true;
+	if (abs(point1.x - point2.x) < eps) {
+		return point1.y > point2.y;
 	}
 	else {
-		if (abs(point1.x - point2.x) < eps) {
-			if (point1.y > point2.y) {
-				return true;
-			}
-			else {
-				return false;
-			}
-		}
-		else {
-			return false;
-		}
+		return point1.x > point2.x;
 	}
 }
 
@@ -60,10 +50,10 @@ int main(int argc, char* argv[]) {
 	int n;
 	char figure;
 
-	double subs1;
-	double sigma;
-	double subs2;
-	double subs3;
+	long long subs1;
+	long long sigma;
+	long long subs2;
+	long long subs3;
 	long long deltax1;
 	long long deltay1;
 	long long deltax2;
@@ -93,16 +83,16 @@ int main(int argc, char* argv[]) {
 	std::ifstream ifile;
 	std::ofstream ofile;
 
-	//ifile.open(argv[2], ios::in);
-	cin >> n;
-	//ifile >> n;
+	ifile.open(argv[2], ios::in);
+	//cin >> n;
+	ifile >> n;
 	for (int i = 0; i < n; i++) {
-		//ifile >> figure;
-		cin >> figure;
+		ifile >> figure;
+		//cin >> figure;
 
 		if (figure == 'L') {
-			//ifile >> _x1 >> _y1 >> _x2 >> _y2;
-			cin >> _x1 >> _y1 >> _x2 >> _y2;
+			ifile >> _x1 >> _y1 >> _x2 >> _y2;
+			//cin >> _x1 >> _y1 >> _x2 >> _y2;
 			a[line_index] = _y2 - _y1;
 			b[line_index] = _x1 - _x2;
 			c[line_index] = _x2 * _y1 - _x1 * _y2;
@@ -112,16 +102,17 @@ int main(int argc, char* argv[]) {
 			ly2[line_index++] = _y2;
 		}
 		else if (figure == 'C') {
-			//ifile >> _x >> _y >> _r;
-			cin >> _x >> _y >> _r;
+			ifile >> _x >> _y >> _r;
+			//cin >> _x >> _y >> _r;
 			x[cycle_index] = _x;
 			y[cycle_index] = _y;
 			r[cycle_index++] = _r;
 		}
 	}
 
-	//ifile.close();
+	ifile.close();
 	
+
 	for (int i = 0; i < line_index; i++) {
 		for (int j = i + 1; j < line_index; j++) {
 			IntersectPoint point;
@@ -136,22 +127,23 @@ int main(int argc, char* argv[]) {
 		}
 	}
 
+
 	for (int i = 0; i < cycle_index; i++) {
 		for (int j = i + 1; j < cycle_index; j++) {
-			subs1 = x[i] * x[i] - 2.0 * x[i] * x[j] + x[j] * x[j] + y[i] * y[i] - 2 * y[i] * y[j] + y[j] * y[j];
-			sigma = (r[i] * r[i] + 2.0 * r[i] * r[j] + r[j] * r[j] - x[i] * x[i] + 2 * x[i] * x[j] - x[j] * x[j] - y[i] * y[i] + 2 * y[i] * y[j] - y[j] * y[j]) * (-r[i] * r[i] + 2 * r[i] * r[j] - r[j] * r[j] + subs1);
-			if (abs(subs1) < eps || sigma < 0) {
+			subs1 = x[i] * x[i] - 2 * x[i] * x[j] + x[j] * x[j] + y[i] * y[i] - 2 * y[i] * y[j] + y[j] * y[j];
+			sigma = (r[i] * r[i] + 2 * r[i] * r[j] + r[j] * r[j] - x[i] * x[i] + 2 * x[i] * x[j] - x[j] * x[j] - y[i] * y[i] + 2 * y[i] * y[j] - y[j] * y[j]) * (-r[i] * r[i] + 2 * r[i] * r[j] - r[j] * r[j] + subs1);
+			if (subs1 == 0 || sigma < 0) {
 			}
 			else {
-				sigma = sqrt(sigma);
-				subs2 = -r[i] * r[i] * x[i] + r[i] * r[i] * x[j] + r[j] * r[j] * x[i] - r[j] * r[j] * x[j] + x[i] * x[i] * x[i] - x[i] * x[i] * x[j] - x[i] * x[j] * x[j] + x[i] * y[i] * y[i] - 2.0 * x[i] * y[i] * y[j] + x[i] * y[j] * y[j] + x[j] * x[j] * x[j] + x[j] * y[i] * y[i] - 2 * x[j] * y[i] * y[j] + x[j] * y[j] * y[j];
-				subs3 = -r[i] * r[i] * y[i] + r[i] * r[i] * y[j] + r[j] * r[j] * y[i] - r[j] * r[j] * y[j] + x[i] * x[i] * y[i] + x[i] * x[i] * y[j] - 2.0 * x[i] * x[j] * y[i] - 2 * x[i] * x[j] * y[j] + x[j] * x[j] * y[i] + x[j] * x[j] * y[j] + y[i] * y[i] * y[i] - y[i] * y[i] * y[j] - y[i] * y[j] * y[j] + y[j] * y[j] * y[j];
+				double sigma1 = sqrt(sigma);
+				subs2 = -r[i] * r[i] * x[i] + r[i] * r[i] * x[j] + r[j] * r[j] * x[i] - r[j] * r[j] * x[j] + x[i] * x[i] * x[i] - x[i] * x[i] * x[j] - x[i] * x[j] * x[j] + x[i] * y[i] * y[i] - 2 * x[i] * y[i] * y[j] + x[i] * y[j] * y[j] + x[j] * x[j] * x[j] + x[j] * y[i] * y[i] - 2 * x[j] * y[i] * y[j] + x[j] * y[j] * y[j];
+				subs3 = -r[i] * r[i] * y[i] + r[i] * r[i] * y[j] + r[j] * r[j] * y[i] - r[j] * r[j] * y[j] + x[i] * x[i] * y[i] + x[i] * x[i] * y[j] - 2 * x[i] * x[j] * y[i] - 2 * x[i] * x[j] * y[j] + x[j] * x[j] * y[i] + x[j] * x[j] * y[j] + y[i] * y[i] * y[i] - y[i] * y[i] * y[j] - y[i] * y[j] * y[j] + y[j] * y[j] * y[j];
 				IntersectPoint point1;
 				IntersectPoint point2;
-				point1.x = (subs2 - sigma * y[i] + sigma * y[j]) / (2 * subs1);
-				point2.x = (subs2 + sigma * y[i] - sigma * y[j]) / (2 * subs1);
-				point1.y = (subs3 + sigma * x[i] - sigma * x[j]) / (2 * subs1);
-				point2.y = (subs3 - sigma * x[i] + sigma * x[j]) / (2 * subs1);
+				point1.x = (subs2 - sigma1 * y[i] + sigma1 * y[j]) / (2 * subs1);
+				point2.x = (subs2 + sigma1 * y[i] - sigma1 * y[j]) / (2 * subs1);
+				point1.y = (subs3 + sigma1 * x[i] - sigma1 * x[j]) / (2 * subs1);
+				point2.y = (subs3 - sigma1 * x[i] + sigma1 * x[j]) / (2 * subs1);
 				v.push_back(point1);
 				if (abs(point1.x - point2.x) < eps && abs(point1.y - point2.y) < eps) {
 				}
@@ -161,6 +153,8 @@ int main(int argc, char* argv[]) {
 			}
 		}
 	}
+
+	
 
 
 	for (int i = 0; i < line_index; i++) {
@@ -173,7 +167,7 @@ int main(int argc, char* argv[]) {
 			norm = deltax1 * deltax1 + deltay1 * deltay1;
 			denominator1 = sqrt(norm);
 			distance = abs(cross / denominator1);
-			if (abs(distance) - 1.0 * r[j] > eps) {
+			if (distance - 1.0 * r[j] > eps) {
 			}
 			else {
 				r_ = (deltax2 * deltax1 + deltay2 * deltay1) * 1.0 / norm;
@@ -183,31 +177,36 @@ int main(int argc, char* argv[]) {
 				deltay4 = deltay1 / denominator1;
 				deltax5 = deltax3 - x[j];
 				deltay5 = deltay3 - y[j];
-				base = sqrt(r[j] * r[j] - (deltax5 * deltax5 + deltay5 * deltay5));
 				IntersectPoint point1;
 				IntersectPoint point2;
+				if (abs(distance - 1.0 * r[j]) < eps) {
+					point1.x = deltax3;
+					point1.y = deltay3;
+					v.push_back(point1);
+					continue;
+				}
+				base = sqrt(r[j] * r[j] - (deltax5 * deltax5 + deltay5 * deltay5));
 				point1.x = deltax3 + deltax4 * base;
 				point1.y = deltay3 + deltay4 * base;
 				point2.x = deltax3 - deltax4 * base;
 				point2.y = deltay3 - deltay4 * base;
 				v.push_back(point1);
-				if (abs(point1.x - point2.x) < eps && abs(point1.y - point2.y) < eps) {
-				}
-				else {
-					v.push_back(point2);
-				}
+				v.push_back(point2);
 			}
 		}
 	}
 
-
 	sort(v.begin(), v.end(), comparer);
 	vector<IntersectPoint>::iterator new_end = unique(v.begin(), v.end(), myunique);
+	
+	//for (auto iter = v.begin(); iter != v.end(); iter++) {
+	//	cout << iter->x << "  " << iter->y << "\n";
+	//}
+	ofile.open(argv[4], ios::out);
+	ofile << new_end - v.begin();
+	ofile.close();
 
-	//ofile.open(argv[4], ios::out);
-	//ofile << new_end - v.begin();
-	//ofile.close();
-	cout << new_end - v.begin();
+	//cout << new_end - v.begin();
 	return 0;
 }
 
@@ -231,12 +230,9 @@ int main(int argc, char* argv[]) {
 			long long y2;
 			//ifile >> x1 >> y1 >> x2 >> y2;
 			cin >> x1 >> y1 >> x2 >> y2;
-			a[line_index] = y2 - y1;
-			b[line_index] = x1 - x2;
-			c[line_index++] = x2 * y1 - x1 * y2;
-			//Line line = RegularLine(x1, y1, x2, y2);
+			Line line = RegularLine(x1, y1, x2, y2);
 
-			//lines[line_index++] = line;
+			lines[line_index++] = line;
 		}
 		else if (figure == 'C') {
 			long long x;
@@ -253,21 +249,6 @@ int main(int argc, char* argv[]) {
 	}
 	
 	//ifile.close();
-	for (int i = 0; i < line_index; i++) {
-		for (int j = i + 1; j < line_index; j++) {
-			IntersectPoint point;
-			long long denominator = a[i] * b[j] - a[j] * b[i];
-			if (abs(denominator) < eps) {
-				point.exist = false;
-			}
-			else {
-				point.x = (b[i] * c[j] - b[j] * c[i]) * 1.0 / denominator;
-				point.y = (a[j] * c[i] - a[i] * c[j]) * 1.0 / denominator;
-				v.push_back(point);
-				//c++;
-			}
-		}
-	}
 
 	for (int i = 0; i < line_index; i++) {
 		for (int j = i + 1; j < line_index; j++) {
@@ -317,5 +298,7 @@ int main(int argc, char* argv[]) {
 	//ofile << new_end - v.begin();
 	//ofile.close();
 	cout << new_end - v.begin();
+
+
 	return 0;
 }*/
